@@ -61,10 +61,11 @@ func (b *Bundle) AddProgram(name string, prog Program, cfg Config) error {
 		return nil
 	}
 	ctx := &Context{
-		Config: cfg,
-		Name:   name,
+		Config:  cfg,
+		Name:    name,
+		program: prog,
 	}
-	b.startProgram(prog, ctx, 0)
+	b.startProgram(ctx, 0)
 	return nil
 }
 
@@ -81,7 +82,7 @@ func (b *Bundle) basename() string {
 
 // start program starts the specified program with the specified context in
 // a separate goroutine after the specified delay.
-func (b *Bundle) startProgram(prog Program, ctx *Context, delay time.Duration) {
+func (b *Bundle) startProgram(ctx *Context, delay time.Duration) {
 	b.numRunning++
 	go func() {
 		if ctx.Config.PanicRecovery != PanicCrash {
@@ -95,7 +96,7 @@ func (b *Bundle) startProgram(prog Program, ctx *Context, delay time.Duration) {
 			}()
 		}
 		time.Sleep(delay)
-		prog(ctx)
+		ctx.program(ctx)
 		b.exit <- ProgramExit{
 			Context: ctx,
 		}

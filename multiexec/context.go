@@ -10,4 +10,7 @@ type Context struct {
 
 	// Name is the name with which the program was started.
 	Name string
+
+	// program is the program that should run in this context.
+	program Program
 }
