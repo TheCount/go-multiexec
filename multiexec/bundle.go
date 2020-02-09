@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"time"
 )
 
 // ProgramExit describes an exiting program.
@@ -63,7 +64,7 @@ func (b *Bundle) AddProgram(name string, prog Program, cfg Config) error {
 		Config: cfg,
 		Name:   name,
 	}
-	b.startProgram(prog, ctx)
+	b.startProgram(prog, ctx, 0)
 	return nil
 }
 
@@ -79,8 +80,8 @@ func (b *Bundle) basename() string {
 }
 
 // start program starts the specified program with the specified context in
-// a separate goroutine.
-func (b *Bundle) startProgram(prog Program, ctx *Context) {
+// a separate goroutine after the specified delay.
+func (b *Bundle) startProgram(prog Program, ctx *Context, delay time.Duration) {
 	b.numRunning++
 	go func() {
 		if ctx.Config.PanicRecovery != PanicCrash {
@@ -93,6 +94,7 @@ func (b *Bundle) startProgram(prog Program, ctx *Context) {
 				}
 			}()
 		}
+		time.Sleep(delay)
 		prog(ctx)
 		b.exit <- ProgramExit{
 			Context: ctx,
