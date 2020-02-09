@@ -57,6 +57,9 @@ func (b *Bundle) AddProgram(name string, prog Program, cfg Config) error {
 	if err := cfg.Validate(); err != nil {
 		return err
 	}
+	if cfg.Restart == nil {
+		cfg.Restart = RunOnce
+	}
 	if b.basename() != name {
 		return nil
 	}
@@ -116,7 +119,24 @@ func (b *Bundle) Wait() []ProgramExit {
 	for b.numRunning > 0 {
 		exit := <-b.exit
 		b.numRunning--
-		result = append(result, exit)
+		if !b.restart(exit) {
+			result = append(result, exit)
+		}
 	}
 	return result
+}
+
+// restart restarts the specified exited program if and only if should be
+// restarted. restart returns true if and only if the program is actually
+// restarted.
+func (b *Bundle) restart(exit ProgramExit) bool {
+	if exit.Reason != nil && exit.Context.Config.PanicRecovery != PanicRestart {
+		return false
+	}
+	delay := exit.Context.Config.Restart(exit.Context)
+	if delay < 0 {
+		return false
+	}
+	b.startProgram(exit.Context, delay)
+	return true
 }

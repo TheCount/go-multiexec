@@ -19,6 +19,10 @@ const (
 	// PanicCrash means that if a program panics, the entire process dies.
 	PanicCrash
 
+	// PanicRestart means that if a program panics, it is nevertheless restarted
+	// according to its restart policy.
+	PanicRestart
+
 	// numPanicRecoveryTypes is the number of panic recovery types.
 	numPanicRecoveryTypes
 )
@@ -27,6 +31,10 @@ const (
 type Config struct {
 	// PanicRecovery describes what should be done when the program panics.
 	PanicRecovery PanicRecovery
+
+	// Restart determines how the program should be restarted when it finishes.
+	// If Restart is nil, the program is not restarted after it finishes.
+	Restart RestartPolicy
 }
 
 // DefaultConfig returns a default configuration for a program to be run at most
