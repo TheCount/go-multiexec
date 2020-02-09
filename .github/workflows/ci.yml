@@ -1,0 +1,13 @@
+name: Build and test go-multiexec module
+on: [push]
+jobs:
+  build:
+    name: Build and test multiexec package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v1
+        with:
+          go-version: '1.13.4'
+      - run: go build ./multiexec
+      - run: go test -cover ./multiexec
