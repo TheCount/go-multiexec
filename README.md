@@ -1,6 +1,7 @@
 # Multiple go programs in one binary
 
 ![](https://github.com/TheCount/go-multiexec/workflows/CI/badge.svg)
+[![Documentation](https://godoc.org/github.com/TheCount/go-multiexec/multiexec?status.svg)](https://godoc.org/github.com/TheCount/go-multiexec/multiexec)
 
 ## Example
 
